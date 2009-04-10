@@ -18,7 +18,7 @@ no_index:
 requires:
   Carp: 1.01
   MIME::Base64: 2.12
-  perl: 5.8.1
+  perl: 5.6.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.01
+version: 0.02

@@ -1,5 +1,8 @@
 Revision history for Perl extension UUID::Object
 
+0.02  Mon Apr 07 17:55:00 JST 2009
+        - fixed as from 'use strict' to 'use warnings'
+
 0.01  Mon Apr 06 14:30:00 JST 2009
         - original version
 

@@ -1,10 +1,10 @@
 package UUID::Object;
 
 use strict;
-use strict;
-use 5.008_001;
+use warnings;
+use 5.006;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Exporter 'import';
 

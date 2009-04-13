@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.006;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Exporter 'import';
 
@@ -634,7 +634,7 @@ such as L<Data::UUID>, L<UUID::Generator::PurePerl>.
 Following properties are defined with standard Perl module manner.
 For setting property, specify that value as argument for the method.
 For getting property, call the method without argument.
-eg.
+e.g.
 
   $version = $uuid->version();    # getter
   $uuid->version(3);              # setter
@@ -662,33 +662,33 @@ Version of UUID defined in RFC 4122 would be from 1 to 5.
 
 Time-low field of UUID.
 
-With some algotithms, timestamp of genesis is stored in UUID.
-Timestamps is a 60-bit value,
-represented as count of 100 nanosconds intervals
+With some algorithms, time-stamp of genesis is stored in UUID.
+Time-stamps is a 60-bit value,
+represented as count of 100 nanoseconds intervals
 since 00:00:00.00 UTC, 15 October 1582,
 the date of Gregorian reform to the Christian calendar.
 (For further account, please refer to RFC 4122)
 
-This field is the lowest 16-bit field of 60-bit timestamp.
+This field is the lowest 16-bit field of 60-bit time-stamp.
 
 =head2 time_mid
 
 Time-mid field of UUID.
 
-This field is the middle 8-bit field of 60-bit timestamp.
+This field is the middle 8-bit field of 60-bit time-stamp.
 
 =head2 time_hi
 
 Time-high field of UUID.
 (part of C<time-high-and-version> octet field)
 
-This field is the highest 4-bit field of 60-bit timestamp.
+This field is the highest 4-bit field of 60-bit time-stamp.
 
 =head2 clk_seq
 
 Clock-seq field of UUID.
 
-This field may be used to help avoid duplicates on same timestamp.
+This field may be used to help avoid duplicates on same time-stamp.
 Normally this has 14-bit width bit field of RFC 4122.
 
 =head2 node
@@ -703,12 +703,12 @@ You can set node property in C<"01-23-de-ad-be-af"> form also.
 
 This property is specific to this class, not described in RFC 4122.
 
-As written in above, the timestamp of UUID is 60-bit unsigned integer.
-But the content of timestamp is inconvenient
+As written in above, the time-stamp of UUID is 60-bit unsigned integer.
+But the content of time-stamp is inconvenient
 because that style is not used on other systems.
 
-This C<time> property represents the timestamp in form of UNIX time,
-the number of seconds since the epoch, 00:00:00 UTC, 1 Janually 1970.
+This C<time> property represents the time-stamp in form of UNIX time,
+the number of seconds since the epoch, 00:00:00 UTC, 1 January 1970.
 Usually UNIX time is represented in integer form,
 but this property has floating point value
 as C<time()> function in L<Time::HiRes>,
@@ -944,7 +944,7 @@ naive assignment is not safe for manipulation.
 Use L<C<clone()>|/$uuid-E<gt>clone()> method for assignment instead.
 
 The L<time> property of UUID::Object handles floating point value,
-but UUID itself represents its timestamps as 60-bit unsigned integer value.
+but UUID itself represents its time-stamps as 60-bit unsigned integer value.
 Some type of loss may occur because of floating point precision.
 (ex. fraction section of IEEE 754 double precision floating point value is
 52-bit width, which is smaller than 60-bit.)
@@ -967,10 +967,10 @@ But some of precede modules implement only some part of them.
 
 =back
 
-So at first, I decided to split functionarity of UUID module
+So at first, I decided to split functionality of UUID module
 into two domains.
 The one is representation of UUID, and the other is generation of UUIDs.
-This module is for the former (and also has parsing functionarity).
+This module is for the former (and also has parsing functionality).
 For the latter functionality, I wrote L<UUID::Generator::PurePerl>.
 
 =head1 AUTHOR

@@ -1,5 +1,8 @@
 Revision history for Perl extension UUID::Object
 
+0.03  Mon Apr 13 12:00:00 JST 2009
+        - modified t/14_time.t (to ignore failure for bad time() impl.)
+
 0.02  Mon Apr 07 17:55:00 JST 2009
         - fixed as from 'use strict' to 'use warnings'
 

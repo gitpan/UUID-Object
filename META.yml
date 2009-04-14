@@ -17,8 +17,9 @@ no_index:
     - t
 requires:
   Carp: 1.01
+  Exporter: 5.562
   MIME::Base64: 2.12
   perl: 5.6.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.03
+version: 0.03_01

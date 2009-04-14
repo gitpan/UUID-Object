@@ -4,9 +4,10 @@ use strict;
 use warnings;
 use 5.006;
 
-our $VERSION = '0.03';
+our $VERSION = '0.03_01';
 
-use Exporter 'import';
+use Exporter;
+*import = \&Exporter::import;
 
 our @EXPORT = qw(
     uuid_nil

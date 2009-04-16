@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.006;
 
-our $VERSION = '0.03_01';
+our $VERSION = '0.04';
 
 use Exporter;
 *import = \&Exporter::import;

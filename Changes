@@ -1,5 +1,9 @@
 Revision history for Perl extension UUID::Object
 
+0.04    Thu Apr 16 10:00:00 JST 2009
+        - released as 0.04
+          (code except $VERSION is quite the same as 0.03_01)
+
 0.03_01 Tue Apr 14 11:00:00 JST 2009
         - changed the way to inherit Exporter's import() method
           (to deal with Exporter prior to version 5.57)

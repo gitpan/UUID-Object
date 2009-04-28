@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.006;
 
-our $VERSION = '0.04';
+our $VERSION = '0.80';
 
 use Exporter;
 *import = \&Exporter::import;
@@ -603,376 +603,26 @@ __END__
 
 UUID::Object - Universally Unique IDentifier (UUID) Object Class
 
-=head1 SYNOPSIS
-
-  use UUID::Object;
-  
-  $u1 = UUID::Object->create_from_hex("6ba7b8119dad11d180b400c04fd430c8");
-  $u1->as_string;     #=> 6ba7b811-9dad-11d1-80b4-00c04fd430c8
-  
-  $u2 = UUID::Object->create_from_base64("a6e4EJ2tEdGAtADAT9QwyA==");
-  $u2->as_string;     #=> 6ba7b810-9dad-11d1-80b4-00c04fd430c8
-  
-  if ($u1 != $u2) {
-      print "UUIDs are different.";
-  }
-  
-  uuid_ns_oid->as_hex;    #=> 6ba7b8129dad11d180b400c04fd430c8
-
 =head1 DESCRIPTION
 
-UUID::Object is an implementation of UUID
-(Universally Unique IDentifier; described in RFC 4122) class.
+This module is going to be marked as *DEPRECATED*.
 
-This class does only represent UUIDs,
-does not "generate" unique UUIDs (with algorithms as described in RFC 4122).
-If you want to acquire suitable UUIDs for your application,
-see other generator classes,
-such as L<Data::UUID>, L<UUID::Generator::PurePerl>.
+Do not use this module in your applications / modules.
 
-=head1 PROPERTIES
+Currently, this implementation is still functional.
+If you want to know API, please refer to PODs in version 0.04.
 
-Following properties are defined with standard Perl module manner.
-For setting property, specify that value as argument for the method.
-For getting property, call the method without argument.
-e.g.
-
-  $version = $uuid->version();    # getter
-  $uuid->version(3);              # setter
-
-=head2 variant
-
-Variant field of UUID.
-(part of C<clock-seq-and-reserved> octet field)
-
-Bit field length of variant is distributed from 1 to 3;
-Valid values of variant are 0, 2, 6 and 7, actually.
-
-Variant of UUID defined in RFC 4122 would be 2.
-
-=head2 version
-
-Version field of UUID.
-(part of C<time-high-and-version> octet field)
-
-This field represent an algorithm used for generating UUID.
-
-Version of UUID defined in RFC 4122 would be from 1 to 5.
-
-=head2 time_low
-
-Time-low field of UUID.
-
-With some algorithms, time-stamp of genesis is stored in UUID.
-Time-stamps is a 60-bit value,
-represented as count of 100 nanoseconds intervals
-since 00:00:00.00 UTC, 15 October 1582,
-the date of Gregorian reform to the Christian calendar.
-(For further account, please refer to RFC 4122)
-
-This field is the lowest 16-bit field of 60-bit time-stamp.
-
-=head2 time_mid
-
-Time-mid field of UUID.
-
-This field is the middle 8-bit field of 60-bit time-stamp.
-
-=head2 time_hi
-
-Time-high field of UUID.
-(part of C<time-high-and-version> octet field)
-
-This field is the highest 4-bit field of 60-bit time-stamp.
-
-=head2 clk_seq
-
-Clock-seq field of UUID.
-
-This field may be used to help avoid duplicates on same time-stamp.
-Normally this has 14-bit width bit field of RFC 4122.
-
-=head2 node
-
-Node field of UUID.
-
-Occasionally this field consists of an IEEE 802 MAC address.
-You will get node property as C<"01:23:DE:AD:BE:AF"> form.
-You can set node property in C<"01-23-de-ad-be-af"> form also.
-
-=head2 time
-
-This property is specific to this class, not described in RFC 4122.
-
-As written in above, the time-stamp of UUID is 60-bit unsigned integer.
-But the content of time-stamp is inconvenient
-because that style is not used on other systems.
-
-This C<time> property represents the time-stamp in form of UNIX time,
-the number of seconds since the epoch, 00:00:00 UTC, 1 January 1970.
-Usually UNIX time is represented in integer form,
-but this property has floating point value
-as C<time()> function in L<Time::HiRes>,
-preferable for precision under one second.
-
-Getting and setting time property with this method may cause
-lost of information, see L<IMPLEMENTATION> section.
-
-=head1 METHODS FOR GENERATION
-
-=head2 __PACKAGE__-E<gt>create_from_binary($binary_string)
-
-A UUID is 128 bits long,
-so you can create UUIDs from 16 octets binary string with this method.
-
-=head2 __PACKAGE__-E<gt>create_from_string($string)
-
-Ordinarily a UUID is represented in string of separated fields form such as
-C<"6ba7b811-9dad-11d1-80b4-00c04fd430c8">.
-You can create UUIDs from strings in these forms with this method.
-
-=head2 __PACKAGE__-E<gt>create_from_hex($hexadecimal_string)
-
-UUIDs are also able to be created from hexadecimal string form, such as
-C<"6ba7b8119dad11d180b400c04fd430c8">.
-(You can specify hexadecimal string in either lower or upper case.)
-
-=head2 __PACKAGE__-E<gt>create_from_base64($base64_string)
-
-You can create UUIDs from a string represented in Base64 form.
-
-=head2 __PACKAGE__-E<gt>create_from_hash(\%hash or %hash)
-
-You can create UUIDs from an hash that represents properties you want
-described in L</PROPERTIES> section.
-
-=head2 __PACKAGE__-E<gt>create($any)
-
-This C<create()> method can be used for all above methods.
-Suitable constructor will be called from type and format of an argument.
-
-=head2 __PACKAGE__-E<gt>new($any)
-
-Of course you can use C<new()> instead of
-L<C<create()>|/__PACKAGE__-E<gt>create($any)> as usual.
-
-=head2 $uuid-E<gt>clone()
-
-Instance of this class is an "object", not a primitive value.
-If you wish to touch any properties of an instance
-came from other instance, you should do C<clone()> it as a first step.
-
-  $u1 = UUID::Object->new(...);
-  $u2 = $u1;
-  $u2->time_low(...);         # this affects $u1 also
-  
-  $u2 = $u1->clone();
-  $u2->time_low(...);         # now, this doesn't affect $u1
-
-=head1 METHODS FOR ASSIGNMENT
-
-=head2 $uuid-E<gt>assign_with_*($argument)
-
-You can assign any value in any form to the instance.
-Following methods are corresponding to methods
-C<create_from_*($argument)> described in L</METHODS FOR GENERATION>,
-so please refer to the document of them for argument specification.
+=head1 FUTURE PLAN
 
 =over 2
 
-=item $uuid-E<gt>assign_with_binary($binary_string)
+=item (1) will be renewed module that behaves like a Mix-in module to L<Data::GUID>
 
-=item $uuid-E<gt>assign_with_string($string)
+=item (2) will be compatibility layer to that module, and be marked as DEPRECATED
 
-=item $uuid-E<gt>assign_with_hex($hexadecimal_string)
-
-=item $uuid-E<gt>assign_with_base64($base64_string)
-
-=item $uuid-E<gt>assign_with_hash(\%hash or %hash)
+=item (3) will be withdrawn from CPAN after a while
 
 =back
-
-=head2 $uuid-E<gt>assign_with_object($other_uuid_object)
-
-This method assigns value of other instance to the instance.
-So,
-
-  $u2 = $u1->clone();
-  
-  # has same meanings as:
-  $u2 = UUID::Object->new();
-  $u2->assign_with_object($u1);
-
-=head2 $uuid-E<gt>assign($any)
-
-You can use C<assign()> methods as one-stop assignment method,
-similar to the L<C<create()>|/__PACKAGE__-E<gt>create($any)> method.
-
-=head1 METHODS FOR REPRESENTATION
-
-=head2 $uuid-E<gt>as_*
-
-You can get representation of a UUID in some forms.
-Representation form of result of following methods
-conforms the specification described in above
-L</METHODS FOR GENERATION> section.
-
-=over 2
-
-=item $uuid-E<gt>as_binary
-
-=item $uuid-E<gt>as_string
-
-=item $uuid-E<gt>as_hex
-
-=item $uuid-E<gt>as_base64
-
-=item $uuid-E<gt>as_string
-
-=item $uuid-E<gt>as_hash
-
-=back
-
-=head2 $uuid-E<gt>as_urn
-
-With this method, you can get the string representation of a UUID as a URN;
-looks like
-C<"urn:uuid:6ba7b811-9dad-11d1-80b4-00c04fd430c8">.
-
-=head1 OVERLOADS
-
-=head2 stringify
-
-Stringify operation is overloaded by
-L<C<as_string()>|/$uuid-E<gt>as_*> method,
-so you can use an instance as normal string in some conditions.
-
-  $uuid = UUID::Object->create_from_string(...);
-  print $uuid;        #=> 6ba7b811-9dad-11d1-80b4-00c04fd430c8
-
-=head2 comparison
-
-Spaceship operator (C<E<lt>=E<gt>>) and C<cmp> are overloaded,
-so you can compare one UUID object with other.
-
-  $u1 = UUID::Object->create_from_string(...);
-  $u2 = UUID::Object->create_from_string(...);
-  
-  if ($u1 == $u2) {
-    # $u1 eqauls to $u2.
-  }
-  
-  if ($u1 lt $u2) {
-    # $u1 is less than $u2.
-    # Of course, you can use '<' operator instead.
-  }
-
-=head1 CONSTANTS
-
-Following constants (some of them represent namespace UUIDs)
-are exported as default.
-
-=over 2
-
-=item C<uuid_nil>
-
-The nil UUID;
-C<00000000-0000-0000-0000-000000000000>.
-
-=item C<uuid_ns_dns>
-
-Namespace UUID for FQDN names;
-C<6ba7b810-9dad-11d1-80b4-00c04fd430c8>.
-
-=item C<uuid_ns_url>
-
-Namespace UUID for URLs;
-C<6ba7b811-9dad-11d1-80b4-00c04fd430c8>.
-
-=item C<uuid_ns_oid>
-
-Namespace UUID for ISO OIDs;
-C<6ba7b812-9dad-11d1-80b4-00c04fd430c8>.
-
-=item C<uuid_ns_x500>
-
-Namespace UUID for X.500 DNs;
-C<6ba7b814-9dad-11d1-80b4-00c04fd430c8>.
-
-=back
-
-=head1 NOTICE ABOUT PORTABILITY
-
-This class stores UUID octets internally in network byte order,
-so UUIDs created by this class do not have portability issue.
-
-But in L<Data::UUID>,
-those octets are stored in the way depending on architectures
-(big-endian or little-endian).
-
-Following (non-portable) methods behave
-as if an internal structure of UUID is in machine dependent byte order.
-
-=over 2
-
-=item create_from_binary_np()
-
-=item assign_with_binary_np()
-
-=item as_binary_np()
-
-=item create_from_base64_np()
-
-=item assign_with_base64_np()
-
-=item as_base64_np()
-
-=back
-
-In L<Data::UUID>, C<*_hex()> methods behave like C<*_string()>.
-The only difference is,
-the format of the former has field separator '-',
-whereas one of the latter has prefix '0x' and doesn't have field separator.
-So currently non-portable version of C<*_hex()> such as C<as_hex_np()>
-are not implemented.
-
-=head1 IMPLEMENTATION
-
-An instance of UUID::Object is a reference to scalar,
-which represents 16 octets (128-bits) binary string.
-So, as written in L<C<clone()>|/$uuid-E<gt>clone()> section,
-naive assignment is not safe for manipulation.
-Use L<C<clone()>|/$uuid-E<gt>clone()> method for assignment instead.
-
-The L<time> property of UUID::Object handles floating point value,
-but UUID itself represents its time-stamps as 60-bit unsigned integer value.
-Some type of loss may occur because of floating point precision.
-(ex. fraction section of IEEE 754 double precision floating point value is
-52-bit width, which is smaller than 60-bit.)
-Setting that property is not recommended.
-
-=head1 MOTIVATION
-
-Already several modules that handles UUIDs are on CPAN.
-Why did I develop yet another module?
-
-Problems:
-
-=over 2
-
-=item Some variants of UUIDs are defined in specification (as L<version>),
-each of them has suitable role in some scenes.
-But some of precede modules implement only some part of them.
-
-=item Most of UUID modules are written in XS codes.
-
-=back
-
-So at first, I decided to split functionality of UUID module
-into two domains.
-The one is representation of UUID, and the other is generation of UUIDs.
-This module is for the former (and also has parsing functionality).
-For the latter functionality, I wrote L<UUID::Generator::PurePerl>.
 
 =head1 AUTHOR
 
@@ -985,8 +635,8 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<UUID::Generator::PurePerl>.
+L<Data::GUID>.
 
-RFC 4122: "A Universally Unique IDentifier (UUID) URN Namespace", 2005, L<http://www.ietf.org/rfc/rfc4122.txt>.
+version 0.04: L<http://search.cpan.org/~banb/UUID-Object-0.04/>.
 
 =cut

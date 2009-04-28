@@ -1,5 +1,8 @@
 Revision history for Perl extension UUID::Object
 
+0.80    Tue Apr 28 12:00:00 JST 2009
+        - this module is going to be marked as DECRECATED
+
 0.04    Thu Apr 16 10:00:00 JST 2009
         - released as 0.04
           (code except $VERSION is quite the same as 0.03_01)

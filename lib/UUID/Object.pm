@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.006;
 
-our $VERSION = '0.80';
+our $VERSION = '0.81';
 
 use Exporter;
 *import = \&Exporter::import;
@@ -30,7 +30,23 @@ use overload (
 
 sub _compare {
     my ($a, $b) = @_;
-    return $$a cmp $$b;
+    local $@;
+
+    if (eval { $b->isa(__PACKAGE__) }) {
+        return $$a cmp $$b;
+    }
+
+    # compare with bare string
+    if (! ref $b) {
+        eval {
+            $b = __PACKAGE__->create_from_string($b);
+        };
+        if (! $@) {
+            return $$a cmp $$b;
+        }
+    }
+
+    return -1;
 }
 
 sub clone {

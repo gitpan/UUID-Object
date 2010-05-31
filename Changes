@@ -1,5 +1,8 @@
 Revision history for Perl extension UUID::Object
 
+0.81    Mon May 31 17:00:00 JST 2010
+        - adjust overloading comparator to act with string (RT#57738)
+
 0.80    Tue Apr 28 12:00:00 JST 2009
         - this module is going to be marked as DECRECATED
 
